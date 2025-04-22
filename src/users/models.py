@@ -12,8 +12,9 @@ class User(TimestampMixin):
 
     __tablename__ = "users"
 
+    first_name: Mapped[str] = mapped_column(nullable=False)
+    last_name: Mapped[str] = mapped_column(nullable=False)
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
-    email: Mapped[str] = mapped_column(nullable=False, unique=True)
     password: Mapped[str] = mapped_column(nullable=False)
 
     tasks: Mapped[list[Task]] = relationship(

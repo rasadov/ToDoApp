@@ -12,19 +12,23 @@ class TaskStatus(str, Enum):
     def __str__(self) -> str:
         return self.value
 
+
 class BaseTaskSchema(BaseModel):
     title: str
     description: str
     status: TaskStatus = TaskStatus.NEW
 
+
 class CreateTaskSchema(BaseTaskSchema):
     pass
 
-class UpdateTaskSchema:
+
+class UpdateTaskSchema(BaseModel):
     id: int
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[TaskStatus] = None
+
 
 class TaskResponseSchema(BaseTaskSchema):
     id: int

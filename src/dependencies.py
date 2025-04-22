@@ -1,8 +1,28 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 
 from src.db import get_session
 from src.tasks import TaskRepository, TaskService
-from src.users import UserRepository, UserService
+from src.users import UserRepository, UserService, TokenData, get_payload_from_token
+
+
+def get_current_user(
+        request: Request
+) -> TokenData:
+    access_token = request.headers.get("Authorization")
+
+    if not access_token:
+        raise ValueError("No access token provided")
+
+    try:
+        user_id = get_payload_from_token(
+            access_token,
+        ).get("user_id")
+        if user_id is None:
+            raise ValueError("Invalid token payload")
+        token_data = TokenData(user_id=user_id, action="auth")
+    except Exception:
+        raise ValueError("Invalid token")
+    return token_data
 
 async def get_user_repository(
         session=Depends(get_session)

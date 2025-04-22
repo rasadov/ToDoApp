@@ -12,6 +12,10 @@ class UserRepository(Repository[User]):
 
         return result.scalars().first()
 
+    async def get_user_by_id(self, user_id: int) -> User:
+        """Gets a user by id."""
+        return await self.get_user_by(User.id == user_id)
+
     async def get_user_by_username(self, username: str) -> User:
         """Gets a user by username."""
         return await self.get_user_by(User.username == username)
