@@ -2,12 +2,12 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.base.models import CustomBase
+from src.base.models import TimestampMixin
 if TYPE_CHECKING:
     from src.tasks.models import Task
 
 
-class User(CustomBase):
+class User(TimestampMixin):
     """User model"""
 
     __tablename__ = "users"

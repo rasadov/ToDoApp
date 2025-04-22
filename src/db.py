@@ -21,7 +21,3 @@ async def get_session() -> AsyncSession:
     async with SessionLocal() as session:
         yield session
         await session.commit()
-
-async def close_session(session: AsyncSession) -> None:
-    """Close session for database"""
-    await session.close()

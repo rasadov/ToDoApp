@@ -7,10 +7,16 @@ from src.tasks.models import Task
 class TaskRepository(Repository[Task]):
     """Task repository"""
 
-    async def get_tasks(self, user_id: int):
+    async def get_tasks(self, limit: int = 100, offset: int = 0):
+        """Gets all tasks."""
+        result = await self.session.execute(select(Task).limit(limit).offset(offset))
+
+        return result.scalars().all()
+
+    async def get_user_tasks(self, user_id: int, limit: int = 100, offset: int = 0):
         """Gets all tasks for a user."""
         result = await self.session.execute(
-            select(Task).where(Task.user_id == user_id)
+            select(Task).where(Task.user_id == user_id).limit(limit).offset(offset)
         )
 
         return result.scalars().all()

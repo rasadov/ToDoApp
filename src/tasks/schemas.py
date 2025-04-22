@@ -1,6 +1,35 @@
+from enum import Enum
+from typing import Optional
+
 from pydantic import BaseModel
 
-class CreateTaskSchema(BaseModel):
+class TaskStatus(str, Enum):
+    """Task status enum"""
+    NEW = "new"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+
+    def __str__(self) -> str:
+        return self.value
+
+class BaseTaskSchema(BaseModel):
     title: str
     description: str
-    status: str
+    status: TaskStatus = TaskStatus.NEW
+
+class CreateTaskSchema(BaseTaskSchema):
+    pass
+
+class UpdateTaskSchema:
+    id: int
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[TaskStatus] = None
+
+class TaskResponseSchema(BaseTaskSchema):
+    id: int
+    updated_at: str
+    created_at: str
+
+    class Config:
+        orm_mode = True
