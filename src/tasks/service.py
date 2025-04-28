@@ -12,13 +12,21 @@ class TaskService:
     async def get_tasks(
             self,
             page: int = 1,
+            status: str = None,
             elements_per_page: int = 10,
     ):
         """Gets a list of tasks."""
-        tasks = await self.task_repository.get_tasks(
-            offset=(page - 1) * elements_per_page,
-            limit=elements_per_page
-        )
+        if status is None:
+            tasks = await self.task_repository.get_tasks(
+                offset=(page - 1) * elements_per_page,
+                limit=elements_per_page,
+            )
+        else:
+            tasks = await self.task_repository.get_tasks_by_status(
+                offset=(page - 1) * elements_per_page,
+                limit=elements_per_page,
+                status=status
+            )
         return tasks
 
     async def get_user_tasks(

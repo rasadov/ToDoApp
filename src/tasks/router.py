@@ -21,11 +21,13 @@ async def get_task(
 async def list_tasks(
     page: int = 1,
     elements_per_page: int = 10,
+    status: str = None,
     task_service=Depends(get_task_service),
 ):
     """Get a list of tasks."""
     return await task_service.get_tasks(
         page=page,
+        status=status,
         elements_per_page=elements_per_page
     )
 
