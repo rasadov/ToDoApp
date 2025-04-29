@@ -16,7 +16,7 @@ class Task(TimestampMixin):
     status: Mapped[str] = mapped_column(nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
-    user: User = relationship("User", backref="tasks")
+    user: Mapped["User"] = relationship("User", back_populates="tasks")
 
     def update(self, **kwargs) -> None:
         """Updates the task with the given kwargs."""

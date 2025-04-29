@@ -1,5 +1,6 @@
 from fastapi import Depends, Request
 
+from src.base.exceptions import UnAuthorizedException
 from src.db import get_session
 from src.tasks import TaskRepository, TaskService
 from src.users import UserRepository, UserService, TokenData, get_payload_from_token
@@ -11,17 +12,17 @@ def get_current_user(
     access_token = request.headers.get("Authorization")
 
     if not access_token:
-        raise ValueError("No access token provided")
+        raise UnAuthorizedException
 
     try:
         user_id = get_payload_from_token(
             access_token,
         ).get("user_id")
         if user_id is None:
-            raise ValueError("Invalid token payload")
+            raise UnAuthorizedException
         token_data = TokenData(user_id=user_id, action="auth")
     except Exception:
-        raise ValueError("Invalid token")
+        raise UnAuthorizedException
     return token_data
 
 async def get_user_repository(

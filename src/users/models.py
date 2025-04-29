@@ -17,7 +17,7 @@ class User(TimestampMixin):
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
     password: Mapped[str] = mapped_column(nullable=False)
 
-    tasks: Mapped[list[Task]] = relationship(
+    tasks: Mapped[list["Task"]] = relationship(
         "Task",
         back_populates="user",
         cascade="all, delete-orphan",

@@ -1,6 +1,7 @@
 from typing import Sequence
 from dataclasses import dataclass
 
+from src.base.exceptions import NotFoundException, BadRequestException, UnAuthorizedException
 from src.tasks.repository import TaskRepository
 from src.tasks.models import Task
 from src.tasks.schemas import CreateTaskSchema, UpdateTaskSchema
@@ -61,9 +62,9 @@ class TaskService:
         """Updates a task."""
         task = await self.task_repository.get_task(schema.id)
         if not task:
-            raise ValueError("Task not found")
+            raise NotFoundException
         if task.user_id != user_id:
-            raise ValueError("You do not have permission to update this task")
+            raise UnAuthorizedException
         task.update(**schema.model_dump())
         await self.task_repository.update_task()
         return task
@@ -76,7 +77,7 @@ class TaskService:
         """Deletes a task."""
         task = await self.task_repository.get_task(task_id)
         if not task:
-            raise ValueError("Task not found")
+            raise NotFoundException
         if task.user_id != user_id:
-            raise ValueError("You do not have permission to delete this task")
+            raise UnAuthorizedException
         await self.task_repository.delete_task(task)

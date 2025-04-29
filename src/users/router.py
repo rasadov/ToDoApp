@@ -33,9 +33,10 @@ async def register(
 @router.post("/refresh")
 async def refresh(
         request: Request,
+        user_service: UserService = Depends(get_user_service),
 ):
     """Refresh token endpoint."""
-    return await UserService.refresh(request)
+    return await user_service.refresh(request)
 
 @router.post("/logout")
 async def logout():
