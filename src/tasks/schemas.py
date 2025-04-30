@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+
 class TaskStatus(str, Enum):
     """Task status enum"""
     NEW = "new"
@@ -34,6 +35,7 @@ class TaskResponseSchema(BaseTaskSchema):
     id: int
     updated_at: str
     created_at: str
+    user_id: Optional[int] = None
 
     class Config:
         orm_mode = True

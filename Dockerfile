@@ -23,7 +23,7 @@ COPY pyproject.toml poetry.lock ./
 
 # Disable virtualenvs
 RUN poetry config virtualenvs.create false \
-    && poetry install
+    && poetry install --with dev
 
 # Copy source code
 COPY . .

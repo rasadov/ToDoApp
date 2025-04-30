@@ -62,9 +62,9 @@ class TaskService:
         """Updates a task."""
         task = await self.task_repository.get_task(schema.id)
         if not task:
-            raise NotFoundException
+            raise NotFoundException("Task not found")
         if task.user_id != user_id:
-            raise UnAuthorizedException
+            raise UnAuthorizedException("User not authorized to update this task")
         task.update(**schema.model_dump())
         await self.task_repository.update_task()
         return task
@@ -77,7 +77,7 @@ class TaskService:
         """Deletes a task."""
         task = await self.task_repository.get_task(task_id)
         if not task:
-            raise NotFoundException
+            raise NotFoundException("Task not found")
         if task.user_id != user_id:
-            raise UnAuthorizedException
+            raise UnAuthorizedException("User not authorized to delete this task")
         await self.task_repository.delete_task(task)

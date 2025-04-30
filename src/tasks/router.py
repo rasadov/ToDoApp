@@ -1,23 +1,15 @@
 from fastapi import APIRouter, Depends
 
 from src.dependencies import get_current_user, get_task_service
-from src.tasks.schemas import CreateTaskSchema, UpdateTaskSchema
-
+from src.tasks.schemas import CreateTaskSchema, UpdateTaskSchema, TaskResponseSchema
 
 router = APIRouter(
     prefix="/tasks",
     tags=["tasks"],
 )
 
-@router.get("/{task_id}")
-async def get_task(
-    task_id: int,
-    task_service=Depends(get_task_service),
-):
-    """Get a task by ID."""
-    return await task_service.get_task(task_id)
 
-@router.get("/list")
+@router.get("/list", response_model=list[TaskResponseSchema])
 async def list_tasks(
     page: int = 1,
     elements_per_page: int = 10,
@@ -25,13 +17,15 @@ async def list_tasks(
     task_service=Depends(get_task_service),
 ):
     """Get a list of tasks."""
+    print("WE ARE HERE SKDJASKLDJ")
     return await task_service.get_tasks(
         page=page,
         status=status,
         elements_per_page=elements_per_page
     )
 
-@router.get("/user/{user_id}")
+
+@router.get("/user/{user_id}", response_model=list[TaskResponseSchema])
 async def list_user_tasks(
     user_id: int,
     page: int = 1,
@@ -44,6 +38,15 @@ async def list_user_tasks(
         page=page,
         elements_per_page=elements_per_page
     )
+
+
+@router.get("/{task_id}", response_model=TaskResponseSchema)
+async def get_task(
+    task_id: int,
+    task_service=Depends(get_task_service),
+):
+    """Get a task by ID."""
+    return await task_service.get_task(task_id)
 
 @router.post("/create")
 async def create_task(

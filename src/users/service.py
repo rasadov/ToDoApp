@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from src.base.exceptions import BadRequestException, UnAuthorizedException, NotFoundException
 from src.users.repository import UserRepository
-from src.users.schemas import LoginSchema, RegisterSchema, TokenData
+from src.users.schemas import LoginSchema, RegisterSchema
 from src.users.models import User
 from src.users import auth, utils
 
@@ -18,7 +18,7 @@ class UserService:
             schema: RegisterSchema,
     ):
         if await self.user_repository.get_user_by_username(schema.username):
-            raise BadRequestException(detail="User already exists")
+            raise BadRequestException("User already exists")
 
         user = User(
             first_name=schema.first_name,
@@ -56,10 +56,10 @@ class UserService:
         user = await self.user_repository.get_user_by_username(schema.username)
 
         if not user:
-            raise NotFoundException(detail="User not found")
+            raise NotFoundException("User not found")
 
         if not utils.verify_password(schema.password, user.password):
-            raise UnAuthorizedException(detail="Incorrect username or password")
+            raise UnAuthorizedException("Incorrect username or password")
 
         access_token, refresh_token = auth.generate_auth_tokens(
             user.id,
@@ -87,18 +87,18 @@ class UserService:
     ):
         refresh_token = request.cookies.get("refresh_token")
         if not refresh_token:
-            raise UnAuthorizedException(detail="Refresh token not found")
+            raise UnAuthorizedException("Refresh token not found")
 
         token_data = auth.decode_token(
             refresh_token,
-            UnAuthorizedException(detail="Invalid refresh token"),
+            UnAuthorizedException("Invalid refresh token"),
         )
 
         if not token_data:
-            raise UnAuthorizedException(detail="Invalid refresh token")
+            raise UnAuthorizedException("Invalid refresh token")
 
         if token_data.action != "auth":
-            raise UnAuthorizedException(detail="Invalid token action")
+            raise UnAuthorizedException("Invalid token action")
 
         access_token, refresh_token = auth.generate_auth_tokens(token_data.user_id)
 
