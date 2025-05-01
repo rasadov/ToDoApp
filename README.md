@@ -59,7 +59,7 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     ACCESS_TOKEN_EXPIRE_MINUTES=30 # Lifetime of access tokens
     REFRESH_TOKEN_EXPIRE_MINUTES=10080 # Lifetime of refresh tokens (e.g., 7 days)
 
-    # PostgreSQL Credentials (if using standard postgres image in docker-compose)
+    # PostgreSQL Credentials
     # These should match the environment variables set for the db service
     POSTGRES_USER=user
     POSTGRES_PASSWORD=password
@@ -70,13 +70,14 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     ```
 
 3.  **Build Docker Images (Optional if pulling pre-built):**
+   Here we start the services so we can run migrations in database
     ```bash
-    docker-compose build
+    docker-compose up -d --build
     ```
 
-4.  **Database Migrations:**
+5.  **Database Migrations:**
     ```bash
-    docker exec -it postgres_db psql -U <db_user> -d <db_name> 
+    docker exec -it postgres_db psql -U user -d mydatabase 
     ```
     Run scripts from `migrations/` to set up the database schema in the ascending order (001_users.sql, 002_tasks.sql).
 
