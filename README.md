@@ -47,11 +47,10 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     ```
 
 2.  **Environment Variables:**
-    Create a `.env` file in the project root directory. This file stores sensitive configuration and settings. Copy the example below and replace the placeholder values with your actual configuration.
+    Create a `.env` file in the project src directory. This file stores sensitive configuration and settings. Copy the example below and replace the placeholder values with your actual configuration.
 
     ```dotenv
-    # Database Connection (adjust user, password, host, port, dbname as needed)
-    # Ensure the host matches your docker-compose service name for the DB (e.g., 'db')
+    # Database Connection
     DATABASE_URL=postgresql+asyncpg://user:password@db:5432/mydatabase
 
     # JWT Settings
