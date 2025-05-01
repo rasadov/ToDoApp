@@ -48,6 +48,7 @@ async def get_task(
     """Get a task by ID."""
     return await task_service.get_task(task_id)
 
+
 @router.post("/create")
 async def create_task(
     schema: CreateTaskSchema,
@@ -60,6 +61,7 @@ async def create_task(
         user_id=user.user_id,
     )
 
+
 @router.put("/update")
 async def update_task(
     schema: UpdateTaskSchema,
@@ -71,6 +73,7 @@ async def update_task(
         schema=schema,
         user_id=user.user_id,
     )
+
 
 @router.delete("/{task_id}")
 async def delete_task(

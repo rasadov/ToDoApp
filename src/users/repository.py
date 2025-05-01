@@ -3,6 +3,7 @@ from sqlalchemy import select
 from src.base.repository import Repository
 from src.users.models import User
 
+
 class UserRepository(Repository[User]):
     """User repository"""
 

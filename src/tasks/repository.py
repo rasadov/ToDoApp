@@ -36,7 +36,8 @@ class TaskRepository(Repository[Task]):
     ) -> Sequence[Task]:
         """Gets all tasks by status."""
         result = await self.session.execute(
-            select(Task).where(Task.status == status).limit(limit).offset(offset)
+            select(Task).where(Task.status == status).limit(
+                limit).offset(offset)
         )
 
         return result.scalars().all()
@@ -49,7 +50,8 @@ class TaskRepository(Repository[Task]):
     ) -> Sequence[Task]:
         """Gets all tasks for a user."""
         result = await self.session.execute(
-            select(Task).where(Task.user_id == user_id).limit(limit).offset(offset)
+            select(Task).where(Task.user_id == user_id).limit(
+                limit).offset(offset)
         )
 
         return result.scalars().all()

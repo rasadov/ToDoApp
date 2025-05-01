@@ -22,7 +22,8 @@ async def test_get_tasks_no_status(task_service: TaskService, mock_task_reposito
     result = await task_service.get_tasks(page=page, elements_per_page=per_page, status=None)
 
     assert result == mock_task_list[:per_page]
-    mock_task_repository.get_tasks.assert_awaited_once_with(offset=expected_offset, limit=per_page)
+    mock_task_repository.get_tasks.assert_awaited_once_with(
+        offset=expected_offset, limit=per_page)
     mock_task_repository.get_tasks_by_status.assert_not_called()
 
 
@@ -74,11 +75,12 @@ async def test_create_task(
 ):
     """Test creating a task."""
     user_id = TEST_USER_ID
-    create_schema = CreateTaskSchema(title="New Service Task", description="Desc", status=TaskStatus.NEW)
+    create_schema = CreateTaskSchema(
+        title="New Service Task", description="Desc", status=TaskStatus.NEW)
 
     async def add_task_side_effect(task: TaskModel):
         if not task.id:
-             task.id = 999
+            task.id = 999
         return task
 
     mock_task_repository.add_task.side_effect = add_task_side_effect
@@ -115,7 +117,6 @@ async def test_update_task_success(task_service: TaskService, mock_task_reposito
     mock_task_repository.get_task.return_value = mock_task
 
     mock_task_repository.update_task = AsyncMock()
-
 
     result = await task_service.update_task(schema=update_schema, user_id=user_id)
 

@@ -9,6 +9,7 @@ router = APIRouter(
     tags=["user"],
 )
 
+
 @router.post(
     "/login",
     response_model=AuthResponseSchema,
@@ -20,6 +21,7 @@ async def login(
     """Login endpoint."""
     return await user_service.login(schema)
 
+
 @router.post(
     "/register",
     response_model=AuthResponseSchema,
@@ -30,6 +32,7 @@ async def register(
 ):
     return await user_service.register(schema)
 
+
 @router.post("/refresh")
 async def refresh(
         request: Request,
@@ -38,8 +41,8 @@ async def refresh(
     """Refresh token endpoint."""
     return await user_service.refresh(request)
 
+
 @router.post("/logout")
 async def logout():
     """Logout endpoint."""
     return await UserService.logout()
-

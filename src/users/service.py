@@ -9,6 +9,7 @@ from src.users.schemas import LoginSchema, RegisterSchema
 from src.users.models import User
 from src.users import auth, utils
 
+
 @dataclass
 class UserService:
     user_repository: UserRepository
@@ -100,7 +101,8 @@ class UserService:
         if token_data.action != "auth":
             raise UnAuthorizedException("Invalid token action")
 
-        access_token, refresh_token = auth.generate_auth_tokens(token_data.user_id)
+        access_token, refresh_token = auth.generate_auth_tokens(
+            token_data.user_id)
 
         response = JSONResponse(
             content={

@@ -25,10 +25,11 @@ AUTH_RESPONSE_DATA = {"access_token": "fake_access_token"}
 async def test_login_success(client: TestClient, mock_user_service: MagicMock):
     """Test successful user login endpoint."""
     # Configure the mock service method to return data matching AuthResponseSchema
-    mock_user_service.login.return_value = AUTH_RESPONSE_DATA # <-- Supposedly corrected
+    mock_user_service.login.return_value = AUTH_RESPONSE_DATA  # <-- Supposedly corrected
 
     # Call the endpoint
-    response = client.post("/user/login", json=LOGIN_DATA) # TestClient calls are sync
+    # TestClient calls are sync
+    response = client.post("/user/login", json=LOGIN_DATA)
 
     # Assertions
     assert response.status_code == status.HTTP_200_OK
@@ -76,7 +77,6 @@ async def test_register_user_exists(client: TestClient, mock_user_service: Magic
 
     mock_user_service.register.return_value = BadRequestException
 
-
     response = client.post("/user/register", json=REGISTER_DATA)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -93,7 +93,8 @@ async def test_refresh_success(client: TestClient, mock_user_service: MagicMock)
 
     cookies = {"refresh_token": OLD_REFRESH_TOKEN}
     # Use the TestClient to make the HTTP request
-    response = client.post("/user/refresh", cookies=cookies) # This call should hit the mock
+    # This call should hit the mock
+    response = client.post("/user/refresh", cookies=cookies)
 
     # ---- Assertions on the HTTP Response ----
     # FastAPI should create a 200 OK response by default from the dict
@@ -120,9 +121,10 @@ async def test_refresh_no_token(client: TestClient, mock_user_service: MagicMock
         headers={"content-type": "application/json"},
         cookies={}
     )
-    mock_user_service.refresh.return_value.json.return_value = {"detail": "Refresh token not found"}
+    mock_user_service.refresh.return_value.json.return_value = {
+        "detail": "Refresh token not found"}
 
-    response = client.post("/user/refresh") # No cookie sent
+    response = client.post("/user/refresh")  # No cookie sent
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -132,10 +134,13 @@ async def test_logout_success(client: TestClient, mock_user_service: MagicMock):
     mock_user_service.logout.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         body=b'{"message": "Logged out"}',
-        headers={'content-type': 'application/json', 'set-cookie': 'refresh_token=; Max-Age=0; Path=/; SameSite=None; HttpOnly; Secure'}, # Simulate cookie deletion
+        headers={'content-type': 'application/json',
+                 # Simulate cookie deletion
+                 'set-cookie': 'refresh_token=; Max-Age=0; Path=/; SameSite=None; HttpOnly; Secure'},
         cookies={}
     )
-    mock_user_service.logout.return_value.json.return_value = {"message": "Logged out"}
+    mock_user_service.logout.return_value.json.return_value = {
+        "message": "Logged out"}
 
     response = client.post("/user/logout")
 

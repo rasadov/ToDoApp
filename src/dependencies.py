@@ -25,11 +25,13 @@ def get_current_user(
         raise UnAuthorizedException
     return token_data
 
+
 async def get_user_repository(
         session=Depends(get_session)
 ) -> UserRepository:
     """Gets a user repository."""
     return UserRepository(session)
+
 
 async def get_task_repository(
         session=Depends(get_session)
@@ -37,11 +39,13 @@ async def get_task_repository(
     """Gets a task repository."""
     return TaskRepository(session)
 
+
 async def get_user_service(
     user_repository: UserRepository = Depends(get_user_repository),
 ) -> UserService:
     """Gets a user service."""
     return UserService(user_repository)
+
 
 async def get_task_service(
     task_repository: TaskRepository = Depends(get_task_repository),

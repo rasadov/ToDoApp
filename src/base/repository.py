@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 T = TypeVar('T')
 
+
 @dataclass
 class Repository(ABC, Generic[T]):
     session: AsyncSession

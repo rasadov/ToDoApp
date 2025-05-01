@@ -21,7 +21,8 @@ async def test_repo_get_task_found(task_repository: TaskRepository, mock_session
     mock_session.execute.assert_awaited_once()
     call_args = mock_session.execute.call_args[0][0]
     assert isinstance(call_args, Select)
-    assert f"WHERE tasks.id = {task_id}" in str(call_args.compile(compile_kwargs={"literal_binds": True}))
+    assert f"WHERE tasks.id = {task_id}" in str(
+        call_args.compile(compile_kwargs={"literal_binds": True}))
 
 
 async def test_repo_get_tasks(task_repository: TaskRepository, mock_session: AsyncMock, mock_task_list: list):
@@ -53,7 +54,8 @@ async def test_repo_get_tasks_by_status(task_repository: TaskRepository, mock_se
     assert isinstance(call_args, Select)
     assert call_args._limit_clause.value == limit
     assert call_args._offset_clause.value == offset
-    assert f"WHERE tasks.status = '{status_filter}'" in str(call_args.compile(compile_kwargs={"literal_binds": True}))
+    assert f"WHERE tasks.status = '{status_filter}'" in str(
+        call_args.compile(compile_kwargs={"literal_binds": True}))
 
 
 # --- Test get_user_tasks ---
@@ -73,7 +75,8 @@ async def test_repo_get_user_tasks(task_repository: TaskRepository, mock_session
 
     assert call_args._limit_clause.value == limit
     assert call_args._offset_clause.value == offset
-    assert f"WHERE tasks.user_id = {user_id}" in str(call_args.compile(compile_kwargs={"literal_binds": True}))
+    assert f"WHERE tasks.user_id = {user_id}" in str(
+        call_args.compile(compile_kwargs={"literal_binds": True}))
 
 
 async def test_repo_get_task_not_found(task_repository: TaskRepository, mock_session: AsyncMock):
@@ -89,7 +92,8 @@ async def test_repo_get_task_not_found(task_repository: TaskRepository, mock_ses
 
 async def test_repo_add_task(task_repository: TaskRepository, mock_session: AsyncMock):
     """Test adding a task."""
-    new_task = TaskModel(title="Repo Add", description="Testing add", status="new")
+    new_task = TaskModel(
+        title="Repo Add", description="Testing add", status="new")
     expected_id = 555
 
     async def refresh_side_effect(obj):

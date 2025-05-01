@@ -6,6 +6,7 @@ from src.tasks.repository import TaskRepository
 from src.tasks.models import Task
 from src.tasks.schemas import CreateTaskSchema, UpdateTaskSchema
 
+
 @dataclass
 class TaskService:
     task_repository: TaskRepository
@@ -31,11 +32,11 @@ class TaskService:
         return tasks
 
     async def get_user_tasks(
-            self,
-            user_id: int,
-            page: int = 1,
-            elements_per_page: int = 10,
-        ) -> Sequence[Task]:
+        self,
+        user_id: int,
+        page: int = 1,
+        elements_per_page: int = 10,
+    ) -> Sequence[Task]:
         """Gets a list of tasks."""
         tasks = await self.task_repository.get_user_tasks(
             user_id=user_id,
@@ -64,7 +65,8 @@ class TaskService:
         if not task:
             raise NotFoundException("Task not found")
         if task.user_id != user_id:
-            raise UnAuthorizedException("User not authorized to update this task")
+            raise UnAuthorizedException(
+                "User not authorized to update this task")
         task.update(**schema.model_dump())
         await self.task_repository.update_task()
         return task
@@ -79,5 +81,6 @@ class TaskService:
         if not task:
             raise NotFoundException("Task not found")
         if task.user_id != user_id:
-            raise UnAuthorizedException("User not authorized to delete this task")
+            raise UnAuthorizedException(
+                "User not authorized to delete this task")
         await self.task_repository.delete_task(task)
