@@ -1,6 +1,8 @@
 services:
   app:
     build:
+      args:
+        POETRY_ARGS: "--without dev"
       context: .
       dockerfile: Dockerfile
     container_name: fastapi_app
