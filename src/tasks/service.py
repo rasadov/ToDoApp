@@ -58,8 +58,9 @@ class TaskService:
         user_id: int,
     ) -> Task:
         """Creates a task."""
-        task = await self.task_repository.add_task(task=Task(**schema.model_dump()))
-        task.user_id = user_id
+        task = await self.task_repository.add_task(
+            task=Task(**schema.model_dump(), user_id=user_id))
+
         return task
 
     async def update_task(

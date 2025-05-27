@@ -18,12 +18,15 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     * Delete Tasks (`/tasks/{task_id}`) (Requires authentication, user can only delete their own tasks).
 * **Authentication:** JWT-based using Access and Refresh tokens.
 * **API Documentation:** Auto-generated interactive documentation (Swagger UI & ReDoc).
+* **Database Migrations:** Alembic
 
 ## Technology Stack
 
 * **Backend:** Python 3.11+
 * **Framework:** FastAPI
 * **Database:** PostgreSQL (interfaced via SQLAlchemy)
+* **ORM:** SQLAlchemy
+* **Migrations:** Alembic
 * **Async Driver:** asyncpg (implied by SQLAlchemy async usage with PostgreSQL)
 * **Validation:** Pydantic
 * **Dependency Management:** pip
@@ -38,7 +41,9 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
 * Docker Compose ([Usually included with Docker Desktop](https://docs.docker.com/compose/install/))
 * Git (for cloning)
 
-## Setup and Installation
+## Setup and Running the Application
+
+The following steps will guide you through setting up and running the application.
 
 1.  **Clone the Repository:**
     ```bash
@@ -47,12 +52,9 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     ```
 
 2.  **Environment Variables:**
-    Create a `.env` file in the project src directory. This file stores sensitive configuration and settings. Copy the example below and replace the placeholder values with your actual configuration.
+    Create a `.env` file in the project's `src` directory (e.g., `ToDoApp/src/.env`). This file stores sensitive configuration and settings. Your application will use these variables to construct the database connection string and for other configurations. Copy the example below and replace placeholder values as needed.
 
     ```dotenv
-    # Database Connection
-    DATABASE_URL=postgresql+asyncpg://user:password@db:5432/mydatabase
-
     # JWT Settings
     SECRET_KEY=your_super_secret_key_for_jwt_signing # CHANGE THIS! Use a strong, random key
     ALGORITHM=HS256 # Algorithm for JWT signing
@@ -60,46 +62,85 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     REFRESH_TOKEN_EXPIRE_MINUTES=10080 # Lifetime of refresh tokens (e.g., 7 days)
 
     # PostgreSQL Credentials
-    # These should match the environment variables set for the db service
+    # These variables are used to connect to the PostgreSQL database.
+    # POSTGRES_HOST should match the service name of your database container in docker-compose.yml
     POSTGRES_USER=user
     POSTGRES_PASSWORD=password
     POSTGRES_DB=mydatabase
+    POSTGRES_HOST=db
+    POSTGRES_PORT=5432
 
     # Application Settings
     DEBUG=False # Set to True for more verbose logging in development
     ```
+    **Note:**
+    * The `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` values should correspond to the credentials configured for the PostgreSQL service in your `docker-compose.yml`.
+    * `POSTGRES_HOST` is typically the service name of the PostgreSQL container (e.g., `db`) as defined in `docker-compose.yml`.
 
-3.  **Build Docker Images (Optional if pulling pre-built):**
-   Here we start the services so we can run migrations in database
+
+3.  **Build and Start Services:**
+    This command builds the Docker images (if they don't exist or if `--build` is specified) and starts the FastAPI application and PostgreSQL database services in detached mode (`-d`).
     ```bash
     docker-compose up -d --build
     ```
+    This step is necessary to have the database container running and the application container (with Alembic) ready before applying migrations.
 
-5.  **Database Migrations:**
+
+4.  **Database Migrations (Alembic):**
+    Once the services are running, apply database migrations using Alembic. The command should be run inside your FastAPI application container (referred to as `fastapi_app` here; adjust if your service name in `docker-compose.yml` is different).
     ```bash
-    docker exec -it postgres_db psql -U user -d mydatabase 
+    docker exec -it fastapi_app alembic upgrade head
     ```
-    Run scripts from `migrations/` to set up the database schema in the ascending order (001_users.sql, 002_tasks.sql).
+    This command applies all pending migrations to bring the database schema to the latest version defined in your Alembic migration scripts.
 
-## Running the Application
 
-1.  **Start Services:**
+5.  **Application is Running:**
+    If the above steps were successful, the API should now be running and accessible.
+    * **API URL:** `http://localhost:8000`
+
+## Verifying Endpoints
+
+You can verify that the API is working through several methods:
+
+1.  **API Documentation (Swagger UI / ReDoc):**
+    FastAPI automatically generates interactive API documentation. This is the easiest way to explore and test endpoints.
+    * **Swagger UI:** [`http://localhost:8000/docs`](http://localhost:8000/docs) - Allows you to interact with the API endpoints directly in your browser.
+    * **ReDoc:** [`http://localhost:8000/redoc`](http://localhost:8000/redoc) - Provides alternative documentation.
+
+2.  **Using `curl` (or any API client like Postman):**
+    You can send requests to the API endpoints using a command-line tool like `curl` or a GUI tool like Postman.
+
+    * **Example: Check the health of the docs endpoint:**
+        ```bash
+        curl http://localhost:8000/docs
+        ```
+        You should receive an HTML response.
+
+    * **Example: List tasks (assuming it's a public endpoint or after authentication):**
+        ```bash
+        curl http://localhost:8000/tasks/list
+        ```
+        Or, for an endpoint requiring authentication, you would first register/login via `/docs` or your API client to get a token, then include it in your request.
+
+    * **Example: Register a new user (refer to `/docs` for the exact request body):**
+        ```bash
+        curl -X POST "http://localhost:8000/user/register" \
+             -H "Content-Type: application/json" \
+             -d '{"email": "user@example.com", "password": "yourpassword"}'
+        ```
+
+### Managing Services
+
+* **To stop the services:**
+    ```bash
+    docker-compose down
+    ```
+* **To start the services again (without rebuilding):**
     ```bash
     docker-compose up -d
     ```
-    This command starts the FastAPI application server and the PostgreSQL database in detached mode.
 
-2.  **Access the API:**
-    The API should now be running at `http://localhost:8000`.
-
-## API Documentation
-
-FastAPI automatically generates interactive API documentation. Once the application is running, you can access:
-
-* **Swagger UI:** [`http://localhost:8000/docs`](http://localhost:8000/docs)
-* **ReDoc:** [`http://localhost:8000/redoc`](http://localhost:8000/redoc)
-
-### Key Endpoints Overview:
+## API Endpoints Overview
 
 * **User Authentication:**
     * `POST /user/register`: Create a new user.
@@ -114,19 +155,22 @@ FastAPI automatically generates interactive API documentation. Once the applicat
     * `PUT /tasks/update`: Update an existing task (Requires authentication).
     * `DELETE /tasks/{task_id}`: Delete a task (Requires authentication).
 
-*(Refer to the `/docs` endpoint for detailed request/response schemas and parameters.)*
+*(Refer to the interactive `/docs` endpoint for detailed request/response schemas, parameters, and to try out the API.)*
 
 ## Running Tests
 
 Tests are written using `pytest`.
 
-1.  **Ensure Services are Running:**
+1.  **Ensure Services are Running and Migrations Applied:**
+    If not already running from the setup, start them and ensure migrations are up to date:
     ```bash
     docker-compose up -d
+    # If you suspect migrations are not current:
+    # docker exec -it fastapi_app alembic upgrade head
     ```
 
 2.  **Execute Tests:**
-    Run the tests inside the running application container:
+    Run the tests inside the running application container (`fastapi_app` should match your application's service name in `docker-compose.yml`):
     ```bash
     docker exec fastapi_app pytest
     ```
