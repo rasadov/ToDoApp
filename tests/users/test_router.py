@@ -84,17 +84,17 @@ async def test_register_user_exists(client: TestClient, mock_user_service: Magic
 
 
 async def test_refresh_success(client: TestClient, mock_user_service: MagicMock):
-    """Test successful token refresh endpoint via dependency injection."""
+    """Test a successful token refresh endpoint via dependency injection."""
 
     # Configure the mock service instance's refresh method.
     # Let's configure it to return the expected data dict.
     # We need to make the mock method awaitable, so use AsyncMock or configure return directly.
     mock_user_service.refresh = AsyncMock(return_value=AUTH_RESPONSE_DATA)
 
-    cookies = {"refresh_token": OLD_REFRESH_TOKEN}
+    client.cookies.set("refresh_token", OLD_REFRESH_TOKEN)
     # Use the TestClient to make the HTTP request
     # This call should hit the mock
-    response = client.post("/user/refresh", cookies=cookies)
+    response = client.post("/user/refresh")
 
     # ---- Assertions on the HTTP Response ----
     # FastAPI should create a 200 OK response by default from the dict

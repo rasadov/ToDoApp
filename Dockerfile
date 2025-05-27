@@ -12,7 +12,7 @@ ENV POETRY_VENV_IN_PROJECT=1
 ENV POETRY_CACHE_DIR=/opt/poetry_cache
 
 # Set working directory
-WORKDIR /src
+WORKDIR /app
 
 # Install system dependencies and Poetry
 RUN apt-get update && apt-get install -y \

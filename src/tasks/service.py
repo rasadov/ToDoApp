@@ -1,7 +1,7 @@
 from typing import Sequence
 from dataclasses import dataclass
 
-from src.base.exceptions import NotFoundException, BadRequestException, UnAuthorizedException
+from src.base.exceptions import NotFoundException, UnAuthorizedException
 from src.tasks.repository import TaskRepository
 from src.tasks.models import Task
 from src.tasks.schemas import CreateTaskSchema, UpdateTaskSchema
@@ -10,6 +10,13 @@ from src.tasks.schemas import CreateTaskSchema, UpdateTaskSchema
 @dataclass
 class TaskService:
     task_repository: TaskRepository
+
+    async def get_task(self, task_id: int) -> Task:
+        """Gets a task by ID."""
+        task = await self.task_repository.get_task(task_id)
+        if not task:
+            raise NotFoundException("Task not found")
+        return task
 
     async def get_tasks(
             self,

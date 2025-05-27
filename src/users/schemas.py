@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class TokenData(BaseModel):
@@ -22,15 +22,13 @@ class LoginSchema(BaseModel):
 class RegisterSchema(BaseUserSchema):
     password: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserResponseSchema(BaseUserSchema):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AuthResponseSchema(BaseModel):
