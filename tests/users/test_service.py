@@ -31,7 +31,7 @@ AUTH_RESPONSE_DATA = {"access_token": "fake_access_token"}
 LOGIN_DATA = {"username": "testuser", "password": "password123"}
 ACCESS_TOKEN = "fake_access_token"
 REFRESH_TOKEN = "fake_refresh_token"
-NEW_REFRESH_TOKEN = "new_fake_refresh_token_value"  # Example new token value
+NEW_REFRESH_TOKEN = "new_fake_refresh_token_value"
 
 
 class SimpleMockRequest:
@@ -147,7 +147,7 @@ async def test_login_invalid_password(
         LOGIN_SCHEMA.password, MOCK_USER.password)
 
 
-MOCK_TOKEN_DATA_AUTH = TokenData(user_id=MOCK_USER.id, action="auth")
+MOCK_TOKEN_DATA_AUTH = TokenData(user_id=MOCK_USER.id, action="refresh_token")
 MOCK_TOKEN_DATA_WRONG_ACTION = TokenData(
     user_id=MOCK_USER.id, action="password_reset")
 
