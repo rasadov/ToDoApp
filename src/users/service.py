@@ -98,7 +98,7 @@ class UserService:
         if not token_data:
             raise UnAuthorizedException("Invalid refresh token")
 
-        if token_data.action != "auth":
+        if token_data.action != "refresh_token":
             raise UnAuthorizedException("Invalid token action")
 
         access_token, refresh_token = auth.generate_auth_tokens(

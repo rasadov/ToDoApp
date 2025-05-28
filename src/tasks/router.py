@@ -27,17 +27,35 @@ async def list_tasks(
     )
 
 
-@router.get("/user/{user_id}", response_model=list[TaskResponseSchema])
-async def list_user_tasks(
+@router.get("/user/me", response_model=list[TaskResponseSchema])
+async def list_my_tasks(
     page: int = 1,
     elements_per_page: int = 10,
     status: str = None,
     current_user: TokenData = Depends(get_current_user),
     task_service: TaskService = Depends(get_task_service),
 ):
-    """Get a list of tasks for a specific user."""
+    """Get a list of tasks for the current user."""
     return await task_service.get_user_tasks(
         user_id=current_user.user_id,
+        status=status,
+        page=page,
+        elements_per_page=elements_per_page
+    )
+
+
+@router.get("/user/{user_id}", response_model=list[TaskResponseSchema])
+async def list_user_tasks(
+    user_id: int,
+    page: int = 1,
+    elements_per_page: int = 10,
+    status: str = None,
+    _: TokenData = Depends(get_current_user),
+    task_service: TaskService = Depends(get_task_service),
+):
+    """Get a list of tasks for a specific user."""
+    return await task_service.get_user_tasks(
+        user_id=user_id,
         status=status,
         page=page,
         elements_per_page=elements_per_page

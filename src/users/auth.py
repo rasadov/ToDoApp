@@ -67,7 +67,7 @@ def create_access_token(
 def create_refresh_token(
         user_id: int,
 ) -> str:
-    """Create refresh token"""
+    """Create a refresh token"""
     return create_token(
         user_id,
         AuthTokenTypes.REFRESH,

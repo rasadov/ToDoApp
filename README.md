@@ -10,12 +10,13 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
     * Token Refresh (`/user/refresh`) using the Refresh token cookie.
     * User Logout (`/user/logout`) clearing the Refresh token cookie.
 * **Task Management:**
-    * Create Tasks (`/tasks/create`) (Requires authentication)
+    * Create Tasks (`/tasks/create`)
     * Get Task by ID (`/tasks/{task_id}`)
     * List Tasks (`/tasks/list`) with pagination and optional status filtering.
+    * Get My Tasks (`/tasks/users/me`).
     * List Tasks for a specific user (`/tasks/user/{user_id}`) with pagination.
-    * Update Tasks (`/tasks/update`) (Requires authentication, user can only update their own tasks).
-    * Delete Tasks (`/tasks/{task_id}`) (Requires authentication, user can only delete their own tasks).
+    * Update Tasks (`/tasks/update`) (User can only update their own tasks).
+    * Delete Tasks (`/tasks/{task_id}`) (User can only delete their own tasks).
 * **Authentication:** JWT-based using Access and Refresh tokens.
 * **API Documentation:** Auto-generated interactive documentation (Swagger UI & ReDoc).
 * **Database Migrations:** Alembic
@@ -98,47 +99,19 @@ The following steps will guide you through setting up and running the applicatio
     If the above steps were successful, the API should now be running and accessible.
     * **API URL:** `http://localhost:8000`
 
-## Verifying Endpoints
+## Docker Management
 
-You can verify that the API is working through several methods:
+### Stop Services
+```bash
+  docker-compose down
+```
 
-1.  **API Documentation (Swagger UI / ReDoc):**
-    FastAPI automatically generates interactive API documentation. This is the easiest way to explore and test endpoints.
-    * **Swagger UI:** [`http://localhost:8000/docs`](http://localhost:8000/docs) - Allows you to interact with the API endpoints directly in your browser.
-    * **ReDoc:** [`http://localhost:8000/redoc`](http://localhost:8000/redoc) - Provides alternative documentation.
+### Start Services
+```bash
+  docker-compose up -d
+```
 
-2.  **Using `curl` (or any API client like Postman):**
-    You can send requests to the API endpoints using a command-line tool like `curl` or a GUI tool like Postman.
-
-    * **Example: Check the health of the docs endpoint:**
-        ```bash
-        curl http://localhost:8000/docs
-        ```
-        You should receive an HTML response.
-
-    * **Example: List tasks (assuming it's a public endpoint or after authentication):**
-        ```bash
-        curl http://localhost:8000/tasks/list
-        ```
-        Or, for an endpoint requiring authentication, you would first register/login via `/docs` or your API client to get a token, then include it in your request.
-
-    * **Example: Register a new user (refer to `/docs` for the exact request body):**
-        ```bash
-        curl -X POST "http://localhost:8000/user/register" \
-             -H "Content-Type: application/json" \
-             -d '{"email": "user@example.com", "password": "yourpassword"}'
-        ```
-
-### Managing Services
-
-* **To stop the services:**
-    ```bash
-    docker-compose down
-    ```
-* **To start the services again (without rebuilding):**
-    ```bash
-    docker-compose up -d
-    ```
+---
 
 ## API Endpoints Overview
 
@@ -148,14 +121,281 @@ You can verify that the API is working through several methods:
     * `POST /user/refresh`: Use refresh token cookie to get a new access token and refresh token.
     * `POST /user/logout`: Clear the refresh token cookie.
 * **Task Management:**
-    * `POST /tasks/create`: Create a new task (Requires authentication).
+    * `POST /tasks/create`: Create a new task.
     * `GET /tasks/list`: Get a paginated list of tasks, optionally filtered by status.
+    * `GET /tasks/users/me`: Get a paginated list of tasks for the authenticated user.
     * `GET /tasks/user/{user_id}`: Get a paginated list of tasks for a specific user.
     * `GET /tasks/{task_id}`: Get details of a specific task.
-    * `PUT /tasks/update`: Update an existing task (Requires authentication).
-    * `DELETE /tasks/{task_id}`: Delete a task (Requires authentication).
+    * `PUT /tasks/update`: Update an existing task.
+    * `DELETE /tasks/{task_id}`: Delete a task.
 
 *(Refer to the interactive `/docs` endpoint for detailed request/response schemas, parameters, and to try out the API.)*
+
+
+# API Endpoints Documentation
+
+## Overview
+This document provides instructions for verifying and testing API endpoints for the task management system.
+
+## Base URL
+Replace `{{baseURL}}` with your actual API base URL in all examples below.
+
+## Authentication
+Most endpoints require authentication. Include the access token in the Authorization header:
+```
+Authorization: Bearer {{access_token}}
+```
+
+---
+
+## 👤 User Endpoints
+
+### 1. Login
+**POST** `/user/login`
+
+Authenticate a user and receive an access token.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+    "username": "your_username",
+    "password": "your_password"
+}
+```
+
+---
+
+### 2. Register
+**POST** `/user/register`
+
+Register a new user account.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "username": "newuser",
+    "password": "securepassword123"
+}
+```
+
+---
+
+### 3. Refresh Token
+**POST** `/user/refresh`
+
+Refresh the authentication token.
+
+**Headers:**
+```
+Authorization: Bearer {{access_token}}
+```
+
+---
+
+### 4. Logout
+**POST** `/user/logout`
+
+Logout the current user.
+
+**Headers:**
+```
+Authorization: Bearer {{access_token}}
+```
+
+---
+
+## 📝 Task Endpoints
+
+> **Note:** All task endpoints require authentication. Include the Authorization header with a valid access token.
+
+### 1. List Tasks
+**GET** `/tasks/list`
+
+Retrieve a paginated list of tasks.
+
+**Headers:**
+```
+Authorization: Bearer {{access_token}}
+```
+
+**Query Parameters:**
+- `page` (integer, optional, default: 1)
+- `elements_per_page` (integer, optional, default: 10)
+- `status` (string, optional): `"new"`, `"in_progress"`, or `"completed"`
+
+**Example:**
+```
+GET /tasks/list?page=1&elements_per_page=20&status=new
+```
+
+---
+
+### 2. Get User Tasks
+**GET** `/tasks/user/{user_id}`
+
+Retrieve tasks for a specific user.
+
+**Headers:**
+```
+Authorization: Bearer {{access_token}}
+```
+
+**Path Parameters:**
+- `user_id` (integer, required): The ID of the user
+
+**Query Parameters:**
+- `page` (integer, optional, default: 1)
+- `elements_per_page` (integer, optional, default: 10)
+- `status` (string, optional): `"new"`, `"in_progress"`, or `"completed"`
+
+**Example:**
+```
+GET /tasks/user/1?page=1&elements_per_page=10
+```
+
+---
+
+### 3. Get My Tasks
+**GET** `/tasks/users/me`
+Retrieve tasks for the authenticated user.
+**Headers:
+```
+Authorization: Bearer {{access_token}}
+```
+
+**Query Parameters:**
+- `page` (integer, optional, default: 1)
+- `elements_per_page` (integer, optional, default: 10)
+- `status` (string, optional): `"new"`, `"in_progress"`, or `"completed"`
+
+example:
+```
+GET /tasks/users/me?page=1&elements_per_page=10
+```
+
+### 4. Get Task by ID
+**GET** `/tasks/{task_id}`
+
+Retrieve a specific task by its ID.
+
+**Headers:**
+```
+Authorization: Bearer {{access_token}}
+```
+
+**Path Parameters:**
+- `task_id` (integer, required): The ID of the task
+
+**Example:**
+```
+GET /tasks/123
+```
+
+---
+
+### 5. Delete Task
+**DELETE** `/tasks/{task_id}`
+
+Delete a specific task.
+
+**Headers:**
+```
+Authorization: Bearer {{access_token}}
+```
+
+**Path Parameters:**
+- `task_id` (integer, required): The ID of the task to delete
+
+**Example:**
+```
+DELETE /tasks/123
+```
+
+---
+
+### 6. Create Task
+**POST** `/tasks/create`
+
+Create a new task.
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+```
+
+**Request Body:**
+```json
+{
+    "title": "My New Task",
+    "description": "Details about the new task.",
+    "status": "new"
+}
+```
+
+**Field Details:**
+- `title` (string, required): Task title
+- `description` (string, required): Task description
+- `status` (string, optional, default: "new"): Task status (`"new"`, `"in_progress"`, `"completed"`)
+
+---
+
+### 7. Update Task
+**PUT** `/tasks/update`
+
+Update an existing task.
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+```
+
+**Request Body:**
+```json
+{
+    "id": 1,
+    "title": "Updated Task Title",
+    "description": "Updated description.",
+    "status": "in_progress"
+}
+```
+
+**Field Details:**
+- `id` (integer, required): ID of the task to update
+- `title` (string, optional): New task title
+- `description` (string, optional): New task description
+- `status` (string, optional): New task status (`"new"`, `"in_progress"`, `"completed"`)
+
+---
+
+## Possible Responses
+| Status Code | Description |
+|-------------| --- |
+| 200         | OK (e.g., successful request) |
+| 201         | Created (e.g., user registered, task created) |
+| 400         | Bad Request (e.g., validation errors) |
+| 401         | Unauthorized (e.g., missing or invalid token) |
+| 404         | Not Found (e.g., user or task not found) |
+| 422         | Unprocessable Entity (e.g., validation errors) |
+
+## Task Status Values
+
+- `"new"`: Newly created task
+- `"in_progress"`: Task currently being worked on  
+- `"completed"`: Finished task
 
 ## Running Tests
 
