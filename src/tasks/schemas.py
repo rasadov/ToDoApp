@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import Optional
 
@@ -33,8 +34,8 @@ class UpdateTaskSchema(BaseModel):
 
 class TaskResponseSchema(BaseTaskSchema):
     id: int
-    updated_at: str
-    created_at: str
+    updated_at: datetime
+    created_at: datetime
     user_id: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)

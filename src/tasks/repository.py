@@ -35,24 +35,35 @@ class TaskRepository(Repository[Task]):
             status: str = "not started"
     ) -> Sequence[Task]:
         """Gets all tasks by status."""
+        print("Status: ", status)
         result = await self.session.execute(
-            select(Task).where(Task.status == status).limit(
-                limit).offset(offset)
+            select(Task)
+            .where(Task.status == status)
+            .limit(limit)
+            .offset(offset)
         )
-
+        print("WE ARE HERE")
         return result.scalars().all()
 
     async def get_user_tasks(
             self,
             user_id: int,
+            status: str = None,
             limit: int = 100,
             offset: int = 0
     ) -> Sequence[Task]:
         """Gets all tasks for a user."""
-        result = await self.session.execute(
-            select(Task).where(Task.user_id == user_id).limit(
-                limit).offset(offset)
-        )
+        if status:
+            result = await self.session.execute(
+                select(Task)
+                .where(Task.user_id == user_id, Task.status == status)
+                .limit(limit).offset(offset)
+            )
+        else:
+            result = await self.session.execute(
+                select(Task).where(Task.user_id == user_id).limit(
+                    limit).offset(offset)
+            )
 
         return result.scalars().all()
 

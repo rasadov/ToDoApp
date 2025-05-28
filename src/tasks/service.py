@@ -36,11 +36,13 @@ class TaskService:
                 limit=elements_per_page,
                 status=status
             )
+        print("Tasks: ", tasks)
         return tasks
 
     async def get_user_tasks(
         self,
         user_id: int,
+        status: str = None,
         page: int = 1,
         elements_per_page: int = 10,
     ) -> Sequence[Task]:
@@ -48,6 +50,7 @@ class TaskService:
         tasks = await self.task_repository.get_user_tasks(
             user_id=user_id,
             offset=(page - 1) * elements_per_page,
+            status=status,
             limit=elements_per_page
         )
         return tasks

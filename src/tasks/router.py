@@ -13,6 +13,7 @@ router = APIRouter(
 
 @router.get("/list", response_model=list[TaskResponseSchema])
 async def list_tasks(
+    _: TokenData = Depends(get_current_user),
     page: int = 1,
     elements_per_page: int = 10,
     status: str = None,
@@ -30,12 +31,14 @@ async def list_tasks(
 async def list_user_tasks(
     page: int = 1,
     elements_per_page: int = 10,
+    status: str = None,
     current_user: TokenData = Depends(get_current_user),
     task_service: TaskService = Depends(get_task_service),
 ):
     """Get a list of tasks for a specific user."""
     return await task_service.get_user_tasks(
         user_id=current_user.user_id,
+        status=status,
         page=page,
         elements_per_page=elements_per_page
     )
