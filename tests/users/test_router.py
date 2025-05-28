@@ -22,7 +22,7 @@ AUTH_RESPONSE_DATA = {"access_token": "fake_access_token"}
 
 async def test_login_success(client: TestClient, mock_user_service: MagicMock):
     """Test successful user login endpoint."""
-    mock_user_service.login.return_value = AUTH_RESPONSE_DATA  # <-- Supposedly corrected
+    mock_user_service.login.return_value = AUTH_RESPONSE_DATA
 
     response = client.post("/user/login", json=LOGIN_DATA)
 

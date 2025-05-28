@@ -91,6 +91,57 @@ async def test_list_user_tasks_success(client: TestClient, mock_task_service: Ma
         user_id=user_id_to_test, status=None, page=2, elements_per_page=10)
 
 
+async def test_list_my_tasks_success(client: TestClient, mock_task_service: MagicMock):
+    """Test successfully listing the current user's tasks."""
+    mock_task_service.get_user_tasks.return_value = TASK_LIST_RESPONSE_EXPECTED
+
+    response = client.get("/tasks/user/me")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == TASK_LIST_RESPONSE_EXPECTED
+    mock_task_service.get_user_tasks.assert_awaited_once_with(
+        user_id=TEST_USER_ID, status=None, page=1, elements_per_page=10)
+
+
+async def test_list_my_tasks_with_pagination(client: TestClient, mock_task_service: MagicMock):
+    """Test listing current user's tasks with pagination parameters."""
+    mock_task_service.get_user_tasks.return_value = TASK_LIST_RESPONSE_EXPECTED
+    page = 2
+    elements = 5
+
+    response = client.get(f"/tasks/user/me?page={page}&elements_per_page={elements}")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == TASK_LIST_RESPONSE_EXPECTED
+    mock_task_service.get_user_tasks.assert_awaited_once_with(
+        user_id=TEST_USER_ID, status=None, page=page, elements_per_page=elements)
+
+
+async def test_list_my_tasks_with_status(client: TestClient, mock_task_service: MagicMock):
+    """Test listing current user's tasks filtered by status."""
+    mock_task_service.get_user_tasks.return_value = TASK_LIST_RESPONSE_EXPECTED
+    test_status = TaskStatus.IN_PROGRESS
+
+    response = client.get(f"/tasks/user/me?status={test_status.value}")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == TASK_LIST_RESPONSE_EXPECTED
+    mock_task_service.get_user_tasks.assert_awaited_once_with(
+        user_id=TEST_USER_ID, status=test_status.value, page=1, elements_per_page=10)
+
+
+async def test_list_my_tasks_empty_result(client: TestClient, mock_task_service: MagicMock):
+    """Test listing current user's tasks when no tasks exist."""
+    mock_task_service.get_user_tasks.return_value = []
+
+    response = client.get("/tasks/user/me")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == []
+    mock_task_service.get_user_tasks.assert_awaited_once_with(
+        user_id=TEST_USER_ID, status=None, page=1, elements_per_page=10)
+
+
 async def test_create_task_success(client: TestClient, mock_task_service: MagicMock):
     mock_task_service.create_task.return_value = TASK_RESPONSE_EXPECTED
 
