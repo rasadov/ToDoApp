@@ -113,7 +113,10 @@ The following steps will guide you through setting up and running the applicatio
 
 ---
 
-## API Endpoints Overview
+# API Endpoints Documentation
+
+## Overview
+This document provides instructions for verifying and testing API endpoints for the task management system.
 
 * **User Authentication:**
     * `POST /user/register`: Create a new user.
@@ -131,14 +134,12 @@ The following steps will guide you through setting up and running the applicatio
 
 *(Refer to the interactive `/docs` endpoint for detailed request/response schemas, parameters, and to try out the API.)*
 
-
-# API Endpoints Documentation
-
-## Overview
-This document provides instructions for verifying and testing API endpoints for the task management system.
-
 ## Base URL
-Replace `{{baseURL}}` with your actual API base URL in all examples below.
+Replace `{{baseURL}}` with your actual API base URL in all examples below. It should be `http://localhost:8000` if running locally with Docker.
+
+```plaintext
+{{baseURL}} = http://localhost:8000
+```
 
 ## Authentication
 Most endpoints require authentication. Include the access token in the Authorization header:
@@ -151,7 +152,7 @@ Authorization: Bearer {{access_token}}
 ## 👤 User Endpoints
 
 ### 1. Login
-**POST** `/user/login`
+**POST** `{{baseURL}}/user/login`
 
 Authenticate a user and receive an access token.
 
@@ -171,7 +172,7 @@ Content-Type: application/json
 ---
 
 ### 2. Register
-**POST** `/user/register`
+**POST** `{{baseURL}}/user/register`
 
 Register a new user account.
 
@@ -193,7 +194,7 @@ Content-Type: application/json
 ---
 
 ### 3. Refresh Token
-**POST** `/user/refresh`
+**POST** `{{baseURL}}/user/refresh`
 
 Refresh the authentication token.
 
@@ -205,7 +206,7 @@ Authorization: Bearer {{access_token}}
 ---
 
 ### 4. Logout
-**POST** `/user/logout`
+**POST** `{{baseURL}}/user/logout`
 
 Logout the current user.
 
@@ -221,7 +222,7 @@ Authorization: Bearer {{access_token}}
 > **Note:** All task endpoints require authentication. Include the Authorization header with a valid access token.
 
 ### 1. List Tasks
-**GET** `/tasks/list`
+**GET** `{{baseURL}}/tasks/list`
 
 Retrieve a paginated list of tasks.
 
@@ -243,7 +244,7 @@ GET /tasks/list?page=1&elements_per_page=20&status=new
 ---
 
 ### 2. Get User Tasks
-**GET** `/tasks/user/{user_id}`
+**GET** `{{baseURL}}/tasks/user/{user_id}`
 
 Retrieve tasks for a specific user.
 
@@ -268,7 +269,7 @@ GET /tasks/user/1?page=1&elements_per_page=10
 ---
 
 ### 3. Get My Tasks
-**GET** `/tasks/users/me`
+**GET** `{{baseURL}}/tasks/users/me`
 Retrieve tasks for the authenticated user.
 **Headers:
 ```
@@ -286,7 +287,7 @@ GET /tasks/users/me?page=1&elements_per_page=10
 ```
 
 ### 4. Get Task by ID
-**GET** `/tasks/{task_id}`
+**GET** `{{baseURL}}/tasks/{task_id}`
 
 Retrieve a specific task by its ID.
 
@@ -306,7 +307,7 @@ GET /tasks/123
 ---
 
 ### 5. Delete Task
-**DELETE** `/tasks/{task_id}`
+**DELETE** `{{baseURL}}/tasks/{task_id}`
 
 Delete a specific task.
 
@@ -326,7 +327,7 @@ DELETE /tasks/123
 ---
 
 ### 6. Create Task
-**POST** `/tasks/create`
+**POST** `{{baseURL}}/tasks/create`
 
 Create a new task.
 
@@ -353,7 +354,7 @@ Authorization: Bearer {{access_token}}
 ---
 
 ### 7. Update Task
-**PUT** `/tasks/update`
+**PUT** `{{baseURL}}/tasks/update`
 
 Update an existing task.
 
