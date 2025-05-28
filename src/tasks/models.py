@@ -23,4 +23,5 @@ class Task(TimestampMixin):
     def update(self, **kwargs) -> None:
         """Updates the task with the given kwargs."""
         for key, value in kwargs.items():
-            setattr(self, key, value)
+            if value and key in ("title", "description", "status"):
+                setattr(self, key, value)

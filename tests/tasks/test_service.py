@@ -54,11 +54,11 @@ async def test_get_user_tasks(task_service: TaskService, mock_task_repository: M
     expected_tasks = [t for t in mock_task_list if t.user_id == user_id]
     mock_task_repository.get_user_tasks.return_value = expected_tasks
 
-    result = await task_service.get_user_tasks(user_id=user_id, page=page, elements_per_page=per_page)
+    result = await task_service.get_user_tasks(user_id=user_id, status=None, page=page, elements_per_page=per_page)
 
     assert result == expected_tasks
     mock_task_repository.get_user_tasks.assert_awaited_once_with(
-        user_id=user_id, offset=expected_offset, limit=per_page
+        user_id=user_id, status=None, offset=expected_offset, limit=per_page
     )
 
 

@@ -47,6 +47,7 @@ async def list_user_tasks(
 @router.get("/{task_id}", response_model=TaskResponseSchema)
 async def get_task(
     task_id: int,
+    _: TokenData = Depends(get_current_user),
     task_service: TaskService = Depends(get_task_service),
 ):
     """Get a task by ID."""

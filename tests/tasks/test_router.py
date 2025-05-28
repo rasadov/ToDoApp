@@ -88,7 +88,7 @@ async def test_list_user_tasks_success(client: TestClient, mock_task_service: Ma
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == TASK_LIST_RESPONSE_EXPECTED
     mock_task_service.get_user_tasks.assert_awaited_once_with(
-        user_id=user_id_to_test, page=2, elements_per_page=10)
+        user_id=user_id_to_test, status=None, page=2, elements_per_page=10)
 
 
 async def test_create_task_success(client: TestClient, mock_task_service: MagicMock):
