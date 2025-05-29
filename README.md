@@ -52,31 +52,14 @@ The following steps will guide you through setting up and running the applicatio
     cd ToDoApp
     ```
 
-2.  **Environment Variables:**
-    Create a `.env` file in the project's `src` directory (e.g., `ToDoApp/src/.env`). This file stores sensitive configuration and settings. Your application will use these variables to construct the database connection string and for other configurations. Copy the example below and replace placeholder values as needed.
+   2.  **Environment Variables:**
+       Create a `.env` file in the project's `src` directory (e.g., `ToDoApp/src/.env`). This file stores sensitive configuration and settings. Your application will use these variables to construct the database connection string and for other configurations.
+       In the `src/.env.example` file, you will find the necessary environment variables. Copy this file to `.env` and fill in the required values.
+   
 
-    ```dotenv
-    # JWT Settings
-    SECRET_KEY=your_super_secret_key_for_jwt_signing # CHANGE THIS! Use a strong, random key
-    ALGORITHM=HS256 # Algorithm for JWT signing
-    ACCESS_TOKEN_EXPIRE_MINUTES=30 # Lifetime of access tokens
-    REFRESH_TOKEN_EXPIRE_MINUTES=10080 # Lifetime of refresh tokens (e.g., 7 days)
-
-    # PostgreSQL Credentials
-    # These variables are used to connect to the PostgreSQL database.
-    # POSTGRES_HOST should match the service name of your database container in docker-compose.yml
-    POSTGRES_USER=user
-    POSTGRES_PASSWORD=password
-    POSTGRES_DB=mydatabase
-    POSTGRES_HOST=db
-    POSTGRES_PORT=5432
-
-    # Application Settings
-    DEBUG=False # Set to True for more verbose logging in development
-    ```
-    **Note:**
-    * The `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` values should correspond to the credentials configured for the PostgreSQL service in your `docker-compose.yml`.
-    * `POSTGRES_HOST` is typically the service name of the PostgreSQL container (e.g., `db`) as defined in `docker-compose.yml`.
+Note:
+- The `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` values should correspond to the credentials configured for the PostgreSQL service in your `docker-compose.yml`.
+- `POSTGRES_HOST` is typically the service name of the PostgreSQL container (e.g., `db`) as defined in `docker-compose.yml`.
 
 
 3.  **Build and Start Services:**
