@@ -30,7 +30,7 @@ A RESTful API built with FastAPI for managing users (authentication) and their t
 * **Migrations:** Alembic
 * **Async Driver:** asyncpg (implied by SQLAlchemy async usage with PostgreSQL)
 * **Validation:** Pydantic
-* **Dependency Management:** pip
+* **Dependency Management:** Poetry
 * **API Specification:** OpenAPI 3.1.0
 * **Testing:** Pytest, pytest-asyncio, HTTPX (via TestClient)
 * **Containerization:** Docker, Docker Compose
